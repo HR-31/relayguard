@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RelayGuard — live relay-fraud detection</title>
+<style>
+  :root{--bg:#0d1420;--panel:#141f2e;--panel2:#0b1420;--line:#22324a;
+    --ink:#e8eff6;--muted:#8ba0b4;--accent:#4c9bff;--red:#ff5668;--green:#39d98a;--amber:#ffb020}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.45;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif}
+  header{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  header h1{font-size:1.15rem;margin:0}
+  header .tag{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:#04111f;background:var(--accent);border-radius:999px;padding:3px 9px}
+  header .sub{color:var(--muted);font-size:.82rem}
+  .controls{margin-left:auto;display:flex;gap:10px;align-items:center}
+  button{background:var(--accent);color:#04111f;border:0;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.86rem}
+  button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:7px}
+  .wrap{display:grid;grid-template-columns:1fr 360px;gap:16px;padding:16px 22px 40px;max-width:1200px;margin:0 auto}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .panel h2{font-size:.76rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 10px}
+  #feed{height:62vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+  .tx{display:flex;gap:12px;align-items:center;background:var(--panel2);border:1px solid var(--line);
+    border-left:4px solid var(--muted);border-radius:9px;padding:9px 12px;animation:pop .25s ease}
+  .tx.relay{border-left-color:var(--red)} .tx.legit{border-left-color:var(--green)}
+  @keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .tx .main{flex:1;min-width:0}
+  .tx .line1{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+  .tx .amt{font-weight:800;font-size:.98rem}
+  .tx .loc{color:var(--muted);font-size:.82rem}
+  .tx .meta{font-size:.72rem;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+  .sigs{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+  .sig{font-size:.66rem;background:#2a1c22;color:#ff9aa6;border:1px solid #5a2630;border-radius:999px;padding:1px 7px}
+  .verdict{text-align:right;flex:0 0 auto;min-width:118px}
+  .badge{font-size:.72rem;font-weight:800;letter-spacing:.03em;padding:3px 9px;border-radius:999px;display:inline-block}
+  .badge.block{background:var(--red);color:#2a0007} .badge.ok{background:var(--green);color:#042417}
+  .score{font-size:.68rem;color:var(--muted);margin-top:3px;font-family:ui-monospace,monospace}
+  .truth{font-size:.66rem;margin-top:3px;font-weight:700}
+  .truth.right{color:var(--green)} .truth.wrong{color:var(--amber)}
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+  .kpi b{display:block;font-size:1.3rem}
+  .kpi span{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .kpi.good b{color:var(--green)} .kpi.bad b{color:var(--red)} .kpi.acc b{color:var(--accent)}
+  .cm{width:100%;border-collapse:collapse;margin:4px 0 2px;font-size:.78rem}
+  .cm th,.cm td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+  .cm th{color:var(--muted);font-weight:600;font-size:.7rem}
+  .cm .tp{background:rgba(57,217,138,.16)} .cm .tn{background:rgba(57,217,138,.08)}
+  .cm .fp{background:rgba(255,86,104,.16)} .cm .fn{background:rgba(255,176,32,.16)}
+  .prog{height:7px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:12px}
+  .prog .bar{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .note{color:var(--muted);font-size:.72rem;margin-top:10px}
+  .legend{display:flex;gap:14px;font-size:.74rem;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+  .dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px}
+  @media(max-width:880px){.wrap{grid-template-columns:1fr}#feed{height:48vh}}
+</style>
+</head>
+<body>
+<header>
+  <span class="tag">RelayGuard</span>
+  <div>
+    <h1>Live NFC relay-fraud detection</h1>
+    <div class="sub">Issuer-side scoring of an authorization stream &mdash; what you see is the real detector's verdict.</div>
+  </div>
+  <div class="controls">
+    <select id="speed">
+      <option value="420">Slow</option>
+      <option value="240" selected>Normal</option>
+      <option value="90">Fast</option>
+      <option value="0">Instant</option>
+    </select>
+    <button id="run">▶ Replay stream</button>
+    <button id="clear" class="ghost">Reset</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <h2>Authorization feed</h2>
+    <div id="feed"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span>approved (legit)</span>
+      <span><span class="dot" style="background:var(--red)"></span>blocked (flagged relay)</span>
+      <span><span class="dot" style="background:var(--amber)"></span>disagrees with ground truth</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Live metrics vs ground truth</h2>
+    <div class="kpis">
+      <div class="kpi good"><b id="k_recall">—</b><span>Recall / detection</span></div>
+      <div class="kpi good"><b id="k_prec">—</b><span>Precision</span></div>
+      <div class="kpi bad"><b id="k_fpr">—</b><span>False-positive rate</span></div>
+      <div class="kpi acc"><b id="k_acc">—</b><span>Accuracy</span></div>
+    </div>
+    <table class="cm">
+      <tr><th></th><th>pred RELAY</th><th>pred LEGIT</th></tr>
+      <tr><th>actual RELAY</th><td class="tp" id="c_tp">0</td><td class="fn" id="c_fn">0</td></tr>
+      <tr><th>actual LEGIT</th><td class="fp" id="c_fp">0</td><td class="tn" id="c_tn">0</td></tr>
+    </table>
+    <div class="prog"><div class="bar" id="bar"></div></div>
+    <div class="note" id="status">Loading stream…</div>
+    <div class="note" id="brk"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const feed = $("feed");
+  let rows = [], threshold = 50, playing = false, cancel = false;
+  let cm = {tp:0,fp:0,tn:0,fn:0}, styleStat = {};
+
+  async function loadDataset(){
+    $("status").textContent = "Loading stream…";
+    const r = await fetch("/api/dataset?tokens=14&seed=7");
+    const d = await r.json();
+    rows = d.rows; threshold = d.threshold;
+    $("status").textContent = `${d.summary.total} transactions ready `
+      + `(${d.summary.legit} legit, ${d.summary.relay} relay: `
+      + `${d.summary.ghost_tap} ghost-tap, ${d.summary.stealth} stealth). Press Replay.`;
+  }
+
+  function resetUI(){
+    cancel = true; feed.innerHTML = ""; cm = {tp:0,fp:0,tn:0,fn:0}; styleStat = {};
+    renderMetrics(0); $("bar").style.width = "0%"; $("brk").textContent = "";
+  }
+
+  function fmtPct(n){ return (n*100).toFixed(1) + "%"; }
+
+  function renderMetrics(done){
+    const {tp,fp,tn,fn} = cm;
+    const recall = (tp+fn) ? tp/(tp+fn) : 0;
+    const prec = (tp+fp) ? tp/(tp+fp) : 1;
+    const fpr = (fp+tn) ? fp/(fp+tn) : 0;
+    const acc = (tp+fp+tn+fn) ? (tp+tn)/(tp+fp+tn+fn) : 0;
+    $("k_recall").textContent = (tp+fn)?fmtPct(recall):"—";
+    $("k_prec").textContent = (tp+fp)?fmtPct(prec):"—";
+    $("k_fpr").textContent = (fp+tn)?fmtPct(fpr):"—";
+    $("k_acc").textContent = done?fmtPct(acc):"—";
+    $("c_tp").textContent=tp; $("c_fp").textContent=fp; $("c_tn").textContent=tn; $("c_fn").textContent=fn;
+  }
+
+  function addCard(tx, res){
+    const flagged = res.verdict === "RELAY";
+    const correct = flagged === !!tx.is_relay;
+    const div = document.createElement("div");
+    div.className = "tx " + (flagged ? "relay" : "legit");
+    const sigs = res.signals.map(s => `<span class="sig">${s.name} +${s.weight}</span>`).join("");
+    let truth = "";
+    if (!correct && flagged && !tx.is_relay) truth = `<div class="truth wrong">✗ false positive</div>`;
+    else if (!correct && !flagged && tx.is_relay) truth = `<div class="truth wrong">✗ missed (${tx.attack})</div>`;
+    else if (correct && tx.is_relay) truth = `<div class="truth right">✓ relay caught</div>`;
+    div.innerHTML = `
+      <div class="main">
+        <div class="line1">
+          <span class="amt">£${tx.amount.toFixed(2)}</span>
+          <span class="loc">${tx.city} · ${tx.terminal_id}</span>
+        </div>
+        <div class="meta">${tx.token} · ${tx.apdu_latency_ms} ms${tx.cdcvm_claimed?" · no-PIN":""}</div>
+        ${sigs?`<div class="sigs">${sigs}</div>`:""}
+      </div>
+      <div class="verdict">
+        <span class="badge ${flagged?"block":"ok"}">${flagged?"⛔ BLOCKED":"✓ approved"}</span>
+        <div class="score">score ${res.score}/${threshold}</div>
+        ${truth}
+      </div>`;
+    feed.insertBefore(div, feed.firstChild);
+  }
+
+  function tally(tx, res){
+    const flagged = res.verdict === "RELAY";
+    if (tx.is_relay){ flagged ? cm.tp++ : cm.fn++; }
+    else { flagged ? cm.fp++ : cm.tn++; }
+    if (tx.is_relay){ styleStat[tx.attack] = styleStat[tx.attack]||{c:0,m:0};
+      flagged ? styleStat[tx.attack].c++ : styleStat[tx.attack].m++; }
+  }
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function run(){
+    if (playing) return;
+    resetUI(); cancel = false; playing = true;
+    $("run").disabled = true;
+    await loadDataset();                 // re-fetch resets the server-side detector
+    const delay = parseInt($("speed").value, 10);
+    for (let i=0; i<rows.length && !cancel; i++){
+      const tx = rows[i];
+      const r = await fetch("/api/score", {method:"POST",
+        headers:{"Content-Type":"application/json"}, body: JSON.stringify(tx)});
+      const res = await r.json();
+      addCard(tx, res); tally(tx, res);
+      renderMetrics(false);
+      $("bar").style.width = ((i+1)/rows.length*100).toFixed(1) + "%";
+      $("status").textContent = `Scoring ${i+1} / ${rows.length}…`;
+      if (delay) await sleep(delay);
+    }
+    renderMetrics(true);
+    const gt = styleStat.ghost_tap||{c:0,m:0}, stv = styleStat.stealth||{c:0,m:0};
+    $("brk").innerHTML = cancel ? "Stopped." :
+      `Done. Ghost-tap: <b style="color:var(--green)">${gt.c} caught</b>, ${gt.m} missed · `
+      + `Stealth: ${stv.c} caught, <b style="color:var(--amber)">${stv.m} missed</b> (the hard case).`;
+    $("status").textContent = cancel ? "Reset." : "Replay complete — metrics are final.";
+    playing = false; $("run").disabled = false;
+  }
+
+  $("run").onclick = run;
+  $("clear").onclick = () => { if(!playing){ resetUI(); loadDataset(); } };
+  loadDataset();
+})();
+</script>
+</body>
+</html>
