@@ -1,6 +1,15 @@
 # RelayGuard
 
+![CI](https://github.com/HR-31/relayguard/actions/workflows/ci.yml/badge.svg)
+![status](https://img.shields.io/badge/status-alpha%20·%20in%20development-orange)
+![python](https://img.shields.io/badge/python-3.9%2B-blue)
+![license](https://img.shields.io/badge/license-MIT-green)
+
 **An issuer-side detector for NFC contactless relay ("Ghost Tap") fraud.**
+
+> 🚧 **Status: in active development (alpha).** Signals, weights and the data model
+> will change. This is a reference implementation, **not production-ready** — do not
+> run it against live authorization traffic. Issues and contributions are welcome.
 
 Relay / "Ghost Tap" attacks are the one actively-exploited contactless threat today:
 a live tap is relayed over the internet to a mule's phone at a distant terminal. The
@@ -93,6 +102,12 @@ from data issuers already have. It is a reference implementation, not a product.
 - ESET — NGate relay malware (2024–2026); Group-IB — *Ghost Tapped* (2026)
 - *Practical EMV Relay Protection*, IEEE S&P 2022 (distance bounding / L1RP)
 - *The EMV Standard: Break, Fix, Verify*, ETH Zürich (2020)
+
+## Maintainer
+
+Built and maintained by **Harish Ravi** — co-founder of
+[SimplyDiscover](https://simply-discover.com), which is my current focus. RelayGuard
+is an independent open-source project; contributions and issues are welcome.
 
 ## License
 
