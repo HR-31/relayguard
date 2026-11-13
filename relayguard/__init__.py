@@ -6,6 +6,7 @@ It contains no attack code.
 """
 
 from .detector import RelayDetector, ScoreResult, Signal, FLAG_THRESHOLD
+from .layered import LayeredDetector
 
-__all__ = ["RelayDetector", "ScoreResult", "Signal", "FLAG_THRESHOLD"]
-__version__ = "0.1.0"
+__all__ = ["RelayDetector", "LayeredDetector", "ScoreResult", "Signal", "FLAG_THRESHOLD"]
+__version__ = "0.2.0"

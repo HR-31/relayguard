@@ -1,0 +1,1973 @@
+{
+ "generated": "2026-11-13",
+ "quick": false,
+ "runtime_s": 234.1,
+ "assumptions": {
+  "relay_floor_ms": 95,
+  "masked_floor_ms": 50,
+  "robust_threshold": 0.8,
+  "fpr_budget": 0.005,
+  "scenarios_per_family": 25,
+  "validation_seeds": [
+   11,
+   23,
+   37
+  ]
+ },
+ "families": {
+  "transit_abuse": {
+   "label": "Express-transit abuse",
+   "kind": "protocol",
+   "what": "Stolen locked phone; the no-auth transit entitlement is steered into a retail purchase."
+  },
+  "brand_mixup": {
+   "label": "Card-brand mix-up",
+   "kind": "protocol",
+   "what": "A Mastercard is presented under a Visa application ID to inherit weaker PIN rules."
+  },
+  "cvm_tamper": {
+   "label": "CVM / PIN-bypass tamper",
+   "kind": "protocol",
+   "what": "Stolen plastic card; verification flags are altered to claim on-device verification."
+  },
+  "expired_card": {
+   "label": "Expired card revived (\"Zombie Card\")",
+   "kind": "protocol",
+   "what": "An expired card's terminal-facing expiry is rewritten so the terminal accepts it."
+  },
+  "atc_replay": {
+   "label": "Cryptogram replay / pre-play",
+   "kind": "protocol",
+   "what": "A previously captured transaction is replayed; its counter does not advance."
+  },
+  "latency_shaped": {
+   "label": "Latency-shaped relay",
+   "kind": "relay",
+   "what": "Relay tuned to sit just under the absolute latency threshold, hours after the last genuine tap."
+  },
+  "pin_phish_retail": {
+   "label": "Relay with phished PIN",
+   "kind": "relay",
+   "what": "Victim is talked into tapping their card and giving the PIN; high-value retail purchase."
+  },
+  "atm_cashout": {
+   "label": "ATM cash-out relay",
+   "kind": "relay",
+   "what": "Relayed card plus phished PIN used for a contactless ATM withdrawal in another city."
+  },
+  "ghost_tap": {
+   "label": "Classic ghost tap",
+   "kind": "relay",
+   "what": "Unsophisticated cross-border relay minutes after a genuine tap, with full network latency."
+  },
+  "stealth_domestic": {
+   "label": "Stealth domestic relay",
+   "kind": "relay",
+   "what": "Relay to a nearby city with moderate latency, minutes after a genuine tap."
+  },
+  "low_and_slow": {
+   "label": "Low-and-slow drain",
+   "kind": "relay",
+   "what": "Many sub-limit taps spaced just outside the velocity window, each at a different terminal."
+  },
+  "cross_border_shaped": {
+   "label": "Plausible-travel relay",
+   "kind": "relay",
+   "what": "Shaped relay abroad, timed so the journey looks like a flight the cardholder could have taken."
+  },
+  "fresh_token_cashout": {
+   "label": "Fresh-wallet cash-out",
+   "kind": "relay",
+   "what": "Stolen card provisioned into a new wallet and cashed out within hours \u2014 no history to compare."
+  },
+  "token_churn": {
+   "label": "Token churn",
+   "kind": "relay",
+   "what": "Many fresh tokens, one sub-limit tap each, all at one mule terminal \u2014 defeats per-token rules."
+  },
+  "seasoned_token": {
+   "label": "Seasoned token",
+   "kind": "relay",
+   "what": "Attacker ages a stolen-card wallet with small relayed taps so its own baseline looks slow, then cashes out."
+  }
+ },
+ "phase1": [
+  {
+   "round": 1,
+   "target": "token_churn",
+   "label": "Token churn",
+   "what": "Many fresh tokens, one sub-limit tap each, all at one mule terminal \u2014 defeats per-token rules.",
+   "extracted_before": 26788.89,
+   "prevented_before": 0.0,
+   "deployed": [
+    "latency_jump",
+    "terminal_fresh_burst"
+   ],
+   "prevented_after": 0.8773,
+   "summary": {
+    "robust": 4,
+    "families": 15,
+    "prevented": 0.2295,
+    "extracted": 134128.9,
+    "attempted": 174074.98,
+    "fpr": 0.00012,
+    "fp": 1,
+    "n_benign": 8073,
+    "precision": 0.9973
+   },
+   "layers": 7
+  },
+  {
+   "round": 2,
+   "target": "low_and_slow",
+   "label": "Low-and-slow drain",
+   "what": "Many sub-limit taps spaced just outside the velocity window, each at a different terminal.",
+   "extracted_before": 24509.47,
+   "prevented_before": 0.0308,
+   "deployed": [
+    "sustained_velocity",
+    "anomalous_spend_accumulation"
+   ],
+   "prevented_after": 0.8966,
+   "summary": {
+    "robust": 8,
+    "families": 15,
+    "prevented": 0.5602,
+    "extracted": 76559.48,
+    "attempted": 174074.98,
+    "fpr": 0.00025,
+    "fp": 2,
+    "n_benign": 8073,
+    "precision": 0.9958
+   },
+   "layers": 9
+  },
+  {
+   "round": 3,
+   "target": "transit_abuse",
+   "label": "Express-transit abuse",
+   "what": "Stolen locked phone; the no-auth transit entitlement is steered into a retail purchase.",
+   "extracted_before": 20406.93,
+   "prevented_before": 0.0,
+   "deployed": [
+    "transit_misuse"
+   ],
+   "prevented_after": 1.0,
+   "summary": {
+    "robust": 9,
+    "families": 15,
+    "prevented": 0.6774,
+    "extracted": 56152.55,
+    "attempted": 174074.98,
+    "fpr": 0.00025,
+    "fp": 2,
+    "n_benign": 8073,
+    "precision": 0.996
+   },
+   "layers": 10
+  },
+  {
+   "round": 4,
+   "target": "brand_mixup",
+   "label": "Card-brand mix-up",
+   "what": "A Mastercard is presented under a Visa application ID to inherit weaker PIN rules.",
+   "extracted_before": 14451.49,
+   "prevented_before": 0.0,
+   "deployed": [
+    "aid_brand_mismatch"
+   ],
+   "prevented_after": 1.0,
+   "summary": {
+    "robust": 10,
+    "families": 15,
+    "prevented": 0.7604,
+    "extracted": 41701.06,
+    "attempted": 174074.98,
+    "fpr": 0.00025,
+    "fp": 2,
+    "n_benign": 8073,
+    "precision": 0.9962
+   },
+   "layers": 11
+  },
+  {
+   "round": 5,
+   "target": "cvm_tamper",
+   "label": "CVM / PIN-bypass tamper",
+   "what": "Stolen plastic card; verification flags are altered to claim on-device verification.",
+   "extracted_before": 14256.41,
+   "prevented_before": 0.0,
+   "deployed": [
+    "cvm_integrity"
+   ],
+   "prevented_after": 1.0,
+   "summary": {
+    "robust": 11,
+    "families": 15,
+    "prevented": 0.8474,
+    "extracted": 26555.51,
+    "attempted": 174074.98,
+    "fpr": 0.00025,
+    "fp": 2,
+    "n_benign": 8073,
+    "precision": 0.9964
+   },
+   "layers": 12
+  },
+  {
+   "round": 6,
+   "target": "seasoned_token",
+   "label": "Seasoned token",
+   "what": "Attacker ages a stolen-card wallet with small relayed taps so its own baseline looks slow, then cashes out.",
+   "extracted_before": 12445.65,
+   "prevented_before": 0.0667,
+   "deployed": [
+    "chronic_latency",
+    "spend_spike"
+   ],
+   "prevented_after": 0.8815,
+   "summary": {
+    "robust": 12,
+    "families": 15,
+    "prevented": 0.9107,
+    "extracted": 15539.85,
+    "attempted": 174074.98,
+    "fpr": 0.00025,
+    "fp": 2,
+    "n_benign": 8073,
+    "precision": 0.9965
+   },
+   "layers": 14
+  },
+  {
+   "round": 7,
+   "target": "cross_border_shaped",
+   "label": "Plausible-travel relay",
+   "what": "Shaped relay abroad, timed so the journey looks like a flight the cardholder could have taken.",
+   "extracted_before": 2528.5,
+   "prevented_before": 0.2085,
+   "deployed": [
+    "new_country"
+   ],
+   "prevented_after": 0.9458,
+   "summary": {
+    "robust": 13,
+    "families": 15,
+    "prevented": 0.9243,
+    "extracted": 13184.55,
+    "attempted": 174074.98,
+    "fpr": 0.00037,
+    "fp": 3,
+    "n_benign": 8073,
+    "precision": 0.9949
+   },
+   "layers": 15
+  },
+  {
+   "round": 8,
+   "target": "atc_replay",
+   "label": "Cryptogram replay / pre-play",
+   "what": "A previously captured transaction is replayed; its counter does not advance.",
+   "extracted_before": 2144.15,
+   "prevented_before": 0.0,
+   "deployed": [
+    "atc_regression"
+   ],
+   "prevented_after": 1.0,
+   "summary": {
+    "robust": 14,
+    "families": 15,
+    "prevented": 0.9366,
+    "extracted": 11040.4,
+    "attempted": 174074.98,
+    "fpr": 0.00037,
+    "fp": 3,
+    "n_benign": 8073,
+    "precision": 0.9952
+   },
+   "layers": 16
+  },
+  {
+   "round": 9,
+   "target": "expired_card",
+   "label": "Expired card revived (\"Zombie Card\")",
+   "what": "An expired card's terminal-facing expiry is rewritten so the terminal accepts it.",
+   "extracted_before": 2038.63,
+   "prevented_before": 0.0,
+   "deployed": [
+    "expired_card"
+   ],
+   "prevented_after": 1.0,
+   "summary": {
+    "robust": 15,
+    "families": 15,
+    "prevented": 0.9483,
+    "extracted": 9001.77,
+    "attempted": 174074.98,
+    "fpr": 0.00037,
+    "fp": 3,
+    "n_benign": 8073,
+    "precision": 0.9953
+   },
+   "layers": 17
+  }
+ ],
+ "phase2": {
+  "iterations": [
+   {
+    "iteration": 1,
+    "worst_family": "low_and_slow",
+    "label": "Low-and-slow drain",
+    "finding": "95 ms, \u00a3263/tap, 17 taps every 3min, 49min after last genuine tap, 598 km away",
+    "finding_payoff": 4483.95,
+    "leak_before": 0.0295,
+    "best_before": 4483.95,
+    "elite_value_before": 9310.56,
+    "trials": [
+     {
+      "patch": "tighten_latency_margin",
+      "elite_payoff": 634.38,
+      "fpr": 0.00025,
+      "accepted": true
+     },
+     {
+      "patch": "anomalous_new_terminal",
+      "elite_payoff": 9042.53,
+      "fpr": 0.00229,
+      "accepted": true
+     },
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 9173.69,
+      "fpr": 0.00038,
+      "accepted": true
+     },
+     {
+      "patch": "churn_window_24h",
+      "elite_payoff": 9310.56,
+      "fpr": 0.00038,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 9310.56,
+      "fpr": 0.00102,
+      "accepted": true
+     }
+    ],
+    "deployed": "tighten_latency_margin",
+    "why": "Relative-latency margin 55 \u2192 40 ms, closing the band between the relay floor and the threshold.",
+    "elite_value_after": 634.38,
+    "leak_after": 0.0113,
+    "best_after": 1342.51
+   },
+   {
+    "iteration": 2,
+    "worst_family": "token_churn",
+    "label": "Token churn",
+    "finding": "132 ms, \u00a384/tap, 16 tokens, every 20min, token 8.8d old, 59 km away",
+    "finding_payoff": 1342.51,
+    "leak_before": 0.0113,
+    "best_before": 1342.51,
+    "elite_value_before": 2209.24,
+    "trials": [
+     {
+      "patch": "anomalous_new_terminal",
+      "elite_payoff": 0.0,
+      "fpr": 0.00284,
+      "accepted": true
+     },
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 1970.57,
+      "fpr": 0.00025,
+      "accepted": true
+     },
+     {
+      "patch": "churn_window_24h",
+      "elite_payoff": 2209.24,
+      "fpr": 0.00025,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 2175.41,
+      "fpr": 0.00037,
+      "accepted": true
+     }
+    ],
+    "deployed": "anomalous_new_terminal",
+    "why": "Relay-like latency at a terminal the token has never used is enough on its own.",
+    "elite_value_after": 0.0,
+    "leak_after": 0.0,
+    "best_after": 0.0
+   }
+  ],
+  "first": {
+   "leak": 0.0295,
+   "best_payoff": 4483.95,
+   "families": {
+    "latency_shaped": {
+     "leak": 0.0124,
+     "evade_rate": 0.05,
+     "best_payoff": 215.81,
+     "best": "103 ms, \u00a3171/tap, 2 taps every 30min, 2.1h after last genuine tap, 564 km away"
+    },
+    "pin_phish_retail": {
+     "leak": 0.0427,
+     "evade_rate": 0.15,
+     "best_payoff": 1100.88,
+     "best": "97 ms, \u00a3367/tap, 3 taps every 47s, 16min after last genuine tap, 5 km away"
+    },
+    "atm_cashout": {
+     "leak": 0.0058,
+     "evade_rate": 0.025,
+     "best_payoff": 348.54,
+     "best": "142 ms, \u00a3470/tap, 3 taps every 18min, 20.4h after last genuine tap"
+    },
+    "ghost_tap": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "125 ms, \u00a330/tap, 2 taps every 45min, 2.5h after last genuine tap, 7006 km away"
+    },
+    "stealth_domestic": {
+     "leak": 0.0171,
+     "evade_rate": 0.1,
+     "best_payoff": 147.05,
+     "best": "117 ms, \u00a375/tap, 3 taps every 32s, 14.7h after last genuine tap, 218 km away"
+    },
+    "low_and_slow": {
+     "leak": 0.0076,
+     "evade_rate": 0.0541,
+     "best_payoff": 4483.95,
+     "best": "95 ms, \u00a3263/tap, 17 taps every 3min, 49min after last genuine tap, 598 km away"
+    },
+    "cross_border_shaped": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "460 ms, \u00a369/tap, 2 taps every 46min, 3.9h after last genuine tap, 1098 km away"
+    },
+    "fresh_token_cashout": {
+     "leak": 0.0067,
+     "evade_rate": 0.05,
+     "best_payoff": 147.06,
+     "best": "225 ms, \u00a3149/tap, 2 taps every 50s, token 47min old, 2646 km away"
+    },
+    "token_churn": {
+     "leak": 0.064,
+     "evade_rate": 0.125,
+     "best_payoff": 4289.13,
+     "best": "98 ms, \u00a3235/tap, 20 tokens, every 2min, token 4.8d old, 319 km away"
+    },
+    "seasoned_token": {
+     "leak": 0.0529,
+     "evade_rate": 0.95,
+     "best_payoff": 1401.97,
+     "best": "95 ms, \u00a3261/tap, 9 seasoning taps, 5 cash-outs every 4.4h"
+    }
+   }
+  },
+  "last": {
+   "leak": 0.0,
+   "best_payoff": 0.0,
+   "families": {
+    "latency_shaped": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "298 ms, \u00a3204/tap, 2 taps every 14min, 5.8h after last genuine tap, 290 km away"
+    },
+    "pin_phish_retail": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "148 ms, \u00a3171/tap, 2 taps every 44min, 5min after last genuine tap, 416 km away"
+    },
+    "atm_cashout": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "424 ms, \u00a3416/tap, 3 taps every 5min, 7min after last genuine tap"
+    },
+    "ghost_tap": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "438 ms, \u00a337/tap, 2 taps every 49min, 11min after last genuine tap, 1869 km away"
+    },
+    "stealth_domestic": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "151 ms, \u00a375/tap, 3.9h after last genuine tap, 511 km away"
+    },
+    "low_and_slow": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "312 ms, \u00a3515/tap, 3 taps every 7min, 5.4h after last genuine tap, 482 km away"
+    },
+    "cross_border_shaped": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "171 ms, \u00a3398/tap, 2 taps every 3min, 6min after last genuine tap, 1330 km away"
+    },
+    "fresh_token_cashout": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "590 ms, \u00a39/tap, 2 taps every 5min, token 11.7h old, 1438 km away"
+    },
+    "token_churn": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "371 ms, \u00a3574/tap, 12 tokens, every 5.0h, token 1.3d old, 15 km away"
+    },
+    "seasoned_token": {
+     "leak": 0.0,
+     "evade_rate": 0.0,
+     "best_payoff": 0.0,
+     "best": "240 ms, \u00a3565/tap, 6 seasoning taps, 7 cash-outs every 2min"
+    }
+   }
+  }
+ },
+ "phase3": {
+  "iterations": [
+   {
+    "iteration": 1,
+    "worst_family": "low_and_slow",
+    "label": "Low-and-slow drain",
+    "finding": "63 ms, \u00a3561/tap, 18 taps every 13.5h, 21min after last genuine tap, 5 km away",
+    "finding_payoff": 8317.65,
+    "leak_before": 0.4265,
+    "best_before": 8317.65,
+    "elite_value_before": 29582.54,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 29582.54,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "churn_window_24h",
+      "elite_payoff": 29582.54,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 29582.54,
+      "fpr": 0.0034,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 29582.54,
+      "fpr": 0.0034,
+      "accepted": true
+     },
+     {
+      "patch": "displaced_new_token",
+      "elite_payoff": 26085.86,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "captive_terminal",
+      "elite_payoff": 23791.1,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 29582.54,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "dormant_token_first_use",
+      "elite_payoff": 29512.72,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "young_merchant_accumulation",
+      "elite_payoff": 26593.71,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "stranger_merchant_highvalue",
+      "elite_payoff": 28738.0,
+      "fpr": 0.00353,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 28737.82,
+      "fpr": 0.00328,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 29512.72,
+      "fpr": 0.00328,
+      "accepted": true
+     }
+    ],
+    "deployed": "captive_terminal",
+    "why": "Token and terminal that have only ever dealt with each other, then a high-value tap.",
+    "elite_value_after": 23791.1,
+    "leak_after": 0.4086,
+    "best_after": 9826.31
+   },
+   {
+    "iteration": 2,
+    "worst_family": "token_churn",
+    "label": "Token churn",
+    "finding": "62 ms, \u00a3489/tap, 20 tokens, every 13min, token 4.3d old, 5 km away",
+    "finding_payoff": 9826.31,
+    "leak_before": 0.4086,
+    "best_before": 9826.31,
+    "elite_value_before": 29657.5,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 29657.5,
+      "fpr": 0.00294,
+      "accepted": true
+     },
+     {
+      "patch": "churn_window_24h",
+      "elite_payoff": 29657.5,
+      "fpr": 0.00294,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 29657.5,
+      "fpr": 0.00184,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 21121.15,
+      "fpr": 0.00356,
+      "accepted": true
+     },
+     {
+      "patch": "displaced_new_token",
+      "elite_payoff": 27203.23,
+      "fpr": 0.00294,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 29657.5,
+      "fpr": 0.00294,
+      "accepted": true
+     },
+     {
+      "patch": "dormant_token_first_use",
+      "elite_payoff": 19848.65,
+      "fpr": 0.00294,
+      "accepted": true
+     },
+     {
+      "patch": "young_merchant_accumulation",
+      "elite_payoff": 18719.25,
+      "fpr": 0.00331,
+      "accepted": true
+     },
+     {
+      "patch": "stranger_merchant_highvalue",
+      "elite_payoff": 19862.82,
+      "fpr": 0.00331,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 29626.24,
+      "fpr": 0.00294,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 20352.35,
+      "fpr": 0.00294,
+      "accepted": true
+     }
+    ],
+    "deployed": "young_merchant_accumulation",
+    "why": "Repeated high-value spend at merchants that only just appeared.",
+    "elite_value_after": 18719.25,
+    "leak_after": 0.3482,
+    "best_after": 11872.44
+   },
+   {
+    "iteration": 3,
+    "worst_family": "token_churn",
+    "label": "Token churn",
+    "finding": "69 ms, \u00a3593/tap, 20 tokens, every 50min, token 51min old, 46 km away",
+    "finding_payoff": 11872.44,
+    "leak_before": 0.3482,
+    "best_before": 11872.44,
+    "elite_value_before": 24344.42,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "churn_window_24h",
+      "elite_payoff": 13098.95,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 24127.37,
+      "fpr": 0.00099,
+      "accepted": true
+     },
+     {
+      "patch": "displaced_new_token",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "dormant_token_first_use",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "stranger_merchant_highvalue",
+      "elite_payoff": 22722.31,
+      "fpr": 0.00099,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 24344.42,
+      "fpr": 0.00087,
+      "accepted": true
+     }
+    ],
+    "deployed": "churn_window_24h",
+    "why": "Look back 24 h (not 30 min) for other fresh tokens at the same terminal.",
+    "elite_value_after": 13098.95,
+    "leak_after": 0.3412,
+    "best_after": 9102.75
+   },
+   {
+    "iteration": 4,
+    "worst_family": "token_churn",
+    "label": "Token churn",
+    "finding": "81 ms, \u00a3505/tap, 18 tokens, every 58s, token 12.9d old, 452 km away",
+    "finding_payoff": 9102.75,
+    "leak_before": 0.3412,
+    "best_before": 9102.75,
+    "elite_value_before": 21906.0,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 21906.0,
+      "fpr": 0.00276,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 21906.0,
+      "fpr": 0.00289,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 21829.49,
+      "fpr": 0.00289,
+      "accepted": true
+     },
+     {
+      "patch": "displaced_new_token",
+      "elite_payoff": 21906.0,
+      "fpr": 0.00276,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 21906.0,
+      "fpr": 0.00276,
+      "accepted": true
+     },
+     {
+      "patch": "dormant_token_first_use",
+      "elite_payoff": 12771.96,
+      "fpr": 0.00276,
+      "accepted": true
+     },
+     {
+      "patch": "stranger_merchant_highvalue",
+      "elite_payoff": 21009.06,
+      "fpr": 0.00276,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 21888.45,
+      "fpr": 0.00276,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 13273.29,
+      "fpr": 0.00276,
+      "accepted": true
+     }
+    ],
+    "deployed": "dormant_token_first_use",
+    "why": "A wallet that sat unused since provisioning and opens with a high-value no-PIN tap.",
+    "elite_value_after": 12771.96,
+    "leak_after": 0.245,
+    "best_after": 5533.03
+   },
+   {
+    "iteration": 5,
+    "worst_family": "token_churn",
+    "label": "Token churn",
+    "finding": "80 ms, \u00a3370/tap, 15 tokens, every 5.8h, token 7.5h old, 23 km away",
+    "finding_payoff": 5533.03,
+    "leak_before": 0.245,
+    "best_before": 5533.03,
+    "elite_value_before": 19375.94,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 19375.94,
+      "fpr": 0.0005,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 19375.94,
+      "fpr": 0.0005,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 18819.78,
+      "fpr": 0.0005,
+      "accepted": true
+     },
+     {
+      "patch": "displaced_new_token",
+      "elite_payoff": 19375.94,
+      "fpr": 0.0005,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 18532.4,
+      "fpr": 0.0005,
+      "accepted": true
+     },
+     {
+      "patch": "stranger_merchant_highvalue",
+      "elite_payoff": 18375.08,
+      "fpr": 0.00062,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 19244.54,
+      "fpr": 0.0005,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 19375.94,
+      "fpr": 0.0005,
+      "accepted": true
+     }
+    ],
+    "deployed": "stranger_merchant_highvalue",
+    "why": "High value + just-appeared merchant + a place the token has never been, together.",
+    "elite_value_after": 18375.08,
+    "leak_after": 0.2355,
+    "best_after": 6609.68
+   },
+   {
+    "iteration": 6,
+    "worst_family": "token_churn",
+    "label": "Token churn",
+    "finding": "78 ms, \u00a3389/tap, 17 tokens, every 33s, token 30.0d old, 493 km away",
+    "finding_payoff": 6609.68,
+    "leak_before": 0.2355,
+    "best_before": 6609.68,
+    "elite_value_before": 16171.37,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 16171.37,
+      "fpr": 0.00186,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 16171.37,
+      "fpr": 0.00186,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 16119.79,
+      "fpr": 0.00186,
+      "accepted": true
+     },
+     {
+      "patch": "displaced_new_token",
+      "elite_payoff": 15267.83,
+      "fpr": 0.00186,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 16171.37,
+      "fpr": 0.00186,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 16171.37,
+      "fpr": 0.00186,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 16132.14,
+      "fpr": 0.00186,
+      "accepted": true
+     }
+    ],
+    "deployed": "displaced_new_token",
+    "why": "A new or never-used wallet first tapped far from the cardholder's home.",
+    "elite_value_after": 15267.83,
+    "leak_after": 0.1592,
+    "best_after": 4758.77
+   },
+   {
+    "iteration": 7,
+    "worst_family": "low_and_slow",
+    "label": "Low-and-slow drain",
+    "finding": "83 ms, \u00a3600/tap, 16 taps every 42min, 1.1h after last genuine tap, 76 km away",
+    "finding_payoff": 4758.77,
+    "leak_before": 0.1592,
+    "best_before": 4758.77,
+    "elite_value_before": 18108.81,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 18108.81,
+      "fpr": 0.00322,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 18108.81,
+      "fpr": 0.00384,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 17659.43,
+      "fpr": 0.00335,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 18108.81,
+      "fpr": 0.00322,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 18067.4,
+      "fpr": 0.00322,
+      "accepted": true
+     },
+     {
+      "patch": "unused_token_burst",
+      "elite_payoff": 15252.84,
+      "fpr": 0.00322,
+      "accepted": true
+     }
+    ],
+    "deployed": "unused_token_burst",
+    "why": "Never-used tokens count toward a terminal burst, not only freshly provisioned ones.",
+    "elite_value_after": 15252.84,
+    "leak_after": 0.1395,
+    "best_after": 4497.01
+   },
+   {
+    "iteration": 8,
+    "worst_family": "low_and_slow",
+    "label": "Low-and-slow drain",
+    "finding": "58 ms, \u00a3453/tap, 15 taps every 53min, 16.2h after last genuine tap, 458 km away",
+    "finding_payoff": 4497.01,
+    "leak_before": 0.1395,
+    "best_before": 4497.01,
+    "elite_value_before": 15308.61,
+    "trials": [
+     {
+      "patch": "fresh_latency_combo",
+      "elite_payoff": 15308.61,
+      "fpr": 0.00137,
+      "accepted": true
+     },
+     {
+      "patch": "accumulate_7d",
+      "elite_payoff": 15308.61,
+      "fpr": 0.00223,
+      "accepted": true
+     },
+     {
+      "patch": "out_of_area",
+      "elite_payoff": 15308.61,
+      "fpr": 0.00149,
+      "accepted": true
+     },
+     {
+      "patch": "strong_fresh_burst",
+      "elite_payoff": 13431.15,
+      "fpr": 0.00137,
+      "accepted": true
+     },
+     {
+      "patch": "atm_daily_limit",
+      "elite_payoff": 15308.61,
+      "fpr": 0.00137,
+      "accepted": true
+     }
+    ],
+    "deployed": "strong_fresh_burst",
+    "why": "Three or more fresh tokens at one terminal is decisive without any latency evidence.",
+    "elite_value_after": 13431.15,
+    "leak_after": 0.1472,
+    "best_after": 6097.63
+   }
+  ],
+  "first": {
+   "leak": 0.4265,
+   "best_payoff": 8317.65,
+   "families": {
+    "latency_shaped": {
+     "leak": 0.279,
+     "evade_rate": 0.425,
+     "best_payoff": 1220.01,
+     "best": "58 ms, \u00a3435/tap, 3 taps every 3min, 14min after last genuine tap, 30 km away"
+    },
+    "pin_phish_retail": {
+     "leak": 0.4891,
+     "evade_rate": 0.575,
+     "best_payoff": 1815.88,
+     "best": "61 ms, \u00a3600/tap, 3 taps every 27s, 9.1h after last genuine tap, 184 km away"
+    },
+    "atm_cashout": {
+     "leak": 0.5169,
+     "evade_rate": 0.6,
+     "best_payoff": 1755.86,
+     "best": "82 ms, \u00a3581/tap, 3 taps every 24min, 33min after last genuine tap"
+    },
+    "ghost_tap": {
+     "leak": 0.043,
+     "evade_rate": 0.025,
+     "best_payoff": 178.36,
+     "best": "87 ms, \u00a3540/tap, 2 taps every 8min, 1.9d after last genuine tap, 4444 km away"
+    },
+    "stealth_domestic": {
+     "leak": 0.4232,
+     "evade_rate": 0.45,
+     "best_payoff": 1282.69,
+     "best": "67 ms, \u00a3569/tap, 3 taps every 4min, 1.3h after last genuine tap, 367 km away"
+    },
+    "low_and_slow": {
+     "leak": 0.384,
+     "evade_rate": 0.4474,
+     "best_payoff": 8317.65,
+     "best": "63 ms, \u00a3561/tap, 18 taps every 13.5h, 21min after last genuine tap, 5 km away"
+    },
+    "cross_border_shaped": {
+     "leak": 0.1263,
+     "evade_rate": 0.125,
+     "best_payoff": 1066.14,
+     "best": "65 ms, \u00a3470/tap, 3 taps every 24min, 12.2h after last genuine tap, 913 km away"
+    },
+    "fresh_token_cashout": {
+     "leak": 0.3929,
+     "evade_rate": 0.6,
+     "best_payoff": 3484.99,
+     "best": "71 ms, \u00a3581/tap, 6 taps every 1.1d, token 3.2h old, 617 km away"
+    },
+    "token_churn": {
+     "leak": 0.5839,
+     "evade_rate": 0.775,
+     "best_payoff": 7647.64,
+     "best": "63 ms, \u00a3586/tap, 13 tokens, every 3min, token 2.7d old, 68 km away"
+    },
+    "seasoned_token": {
+     "leak": 0.5607,
+     "evade_rate": 0.65,
+     "best_payoff": 4129.36,
+     "best": "63 ms, \u00a3404/tap, 10 seasoning taps, 10 cash-outs every 3min"
+    }
+   }
+  },
+  "last": {
+   "leak": 0.1472,
+   "best_payoff": 6097.63,
+   "families": {
+    "latency_shaped": {
+     "leak": 0.046,
+     "evade_rate": 0.2,
+     "best_payoff": 492.87,
+     "best": "81 ms, \u00a3166/tap, 3 taps every 1min, 3.4h after last genuine tap, 71 km away"
+    },
+    "pin_phish_retail": {
+     "leak": 0.4289,
+     "evade_rate": 0.55,
+     "best_payoff": 1266.73,
+     "best": "77 ms, \u00a3421/tap, 3 taps every 53min, 1.4d after last genuine tap, 33 km away"
+    },
+    "atm_cashout": {
+     "leak": 0.5285,
+     "evade_rate": 0.575,
+     "best_payoff": 1813.56,
+     "best": "65 ms, \u00a3600/tap, 3 taps every 48s, 24min after last genuine tap"
+    },
+    "ghost_tap": {
+     "leak": 0.0312,
+     "evade_rate": 0.075,
+     "best_payoff": 235.07,
+     "best": "79 ms, \u00a3298/tap, 10.6h after last genuine tap, 1610 km away"
+    },
+    "stealth_domestic": {
+     "leak": 0.129,
+     "evade_rate": 0.15,
+     "best_payoff": 714.91,
+     "best": "78 ms, \u00a3472/tap, 2 taps every 2min, 2.2h after last genuine tap, 204 km away"
+    },
+    "low_and_slow": {
+     "leak": 0.2435,
+     "evade_rate": 0.4,
+     "best_payoff": 6097.63,
+     "best": "73 ms, \u00a3408/tap, 20 taps every 3.0h, 4.1h after last genuine tap, 215 km away"
+    },
+    "cross_border_shaped": {
+     "leak": 0.0005,
+     "evade_rate": 0.025,
+     "best_payoff": 205.66,
+     "best": "77 ms, \u00a369/tap, 3 taps every 5min, 5.3h after last genuine tap, 602 km away"
+    },
+    "fresh_token_cashout": {
+     "leak": 0.296,
+     "evade_rate": 0.625,
+     "best_payoff": 1402.28,
+     "best": "75 ms, \u00a3233/tap, 6 taps every 16.6h, token 32min old, 337 km away"
+    },
+    "token_churn": {
+     "leak": 0.033,
+     "evade_rate": 0.4,
+     "best_payoff": 867.68,
+     "best": "51 ms, \u00a3431/tap, 20 tokens, every 58s, token 4min old, 418 km away"
+    },
+    "seasoned_token": {
+     "leak": 0.1023,
+     "evade_rate": 0.75,
+     "best_payoff": 1408.31,
+     "best": "79 ms, \u00a3437/tap, 0 seasoning taps, 4 cash-outs every 1.4d"
+    }
+   }
+  }
+ },
+ "fuzz_baseline": {
+  "leak": 0.6498,
+  "best_payoff": 12037.87,
+  "families": {
+   "latency_shaped": {
+    "leak": 0.2418,
+    "evade_rate": 0.3,
+    "best_payoff": 1715.93,
+    "best": "336 ms, \u00a3569/tap, 3 taps every 10min, 1.4h after last genuine tap, 419 km away"
+   },
+   "pin_phish_retail": {
+    "leak": 0.5979,
+    "evade_rate": 0.6,
+    "best_payoff": 1779.72,
+    "best": "301 ms, \u00a3600/tap, 3 taps every 14min, 56min after last genuine tap, 164 km away"
+   },
+   "atm_cashout": {
+    "leak": 0.5232,
+    "evade_rate": 0.55,
+    "best_payoff": 1639.13,
+    "best": "230 ms, \u00a3545/tap, 3 taps every 1.0h, 4.2h after last genuine tap"
+   },
+   "ghost_tap": {
+    "leak": 0.1267,
+    "evade_rate": 0.075,
+    "best_payoff": 1271.48,
+    "best": "252 ms, \u00a3559/tap, 3 taps every 14min, 17.3h after last genuine tap, 5462 km away"
+   },
+   "stealth_domestic": {
+    "leak": 0.5421,
+    "evade_rate": 0.6,
+    "best_payoff": 1788.09,
+    "best": "101 ms, \u00a3598/tap, 3 taps every 8min, 27min after last genuine tap, 288 km away"
+   },
+   "low_and_slow": {
+    "leak": 0.5706,
+    "evade_rate": 0.5946,
+    "best_payoff": 10834.12,
+    "best": "95 ms, \u00a3548/tap, 20 taps every 6min, 28min after last genuine tap, 514 km away"
+   },
+   "cross_border_shaped": {
+    "leak": 0.0749,
+    "evade_rate": 0.15,
+    "best_payoff": 480.44,
+    "best": "241 ms, \u00a3215/tap, 3 taps every 22min, 9.8h after last genuine tap, 604 km away"
+   },
+   "fresh_token_cashout": {
+    "leak": 0.7244,
+    "evade_rate": 0.725,
+    "best_payoff": 3494.84,
+    "best": "203 ms, \u00a3581/tap, 6 taps every 1.1h, token 2min old, 1426 km away"
+   },
+   "token_churn": {
+    "leak": 0.8002,
+    "evade_rate": 0.8,
+    "best_payoff": 12037.87,
+    "best": "164 ms, \u00a3600/tap, 20 tokens, every 20s, token 30.0d old, 432 km away"
+   },
+   "seasoned_token": {
+    "leak": 1.0,
+    "evade_rate": 1.0,
+    "best_payoff": 6096.86,
+    "best": "161 ms, \u00a3600/tap, 4 seasoning taps, 10 cash-outs every 1.9h"
+   }
+  }
+ },
+ "fuzz_final": {
+  "leak": 0.0,
+  "best_payoff": 0.0,
+  "families": {
+   "latency_shaped": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "498 ms, \u00a3570/tap, 2 taps every 9min, 1.7h after last genuine tap, 420 km away"
+   },
+   "pin_phish_retail": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "538 ms, \u00a3221/tap, 3 taps every 19min, 6min after last genuine tap, 540 km away"
+   },
+   "atm_cashout": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "584 ms, \u00a3146/tap, 3 taps every 1min, 1.0h after last genuine tap"
+   },
+   "ghost_tap": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "366 ms, \u00a3274/tap, 2 taps every 27min, 20min after last genuine tap, 2864 km away"
+   },
+   "stealth_domestic": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "200 ms, \u00a3416/tap, 2 taps every 36s, 39min after last genuine tap, 269 km away"
+   },
+   "low_and_slow": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "182 ms, \u00a319/tap, 5 taps every 2.5h, 2.2h after last genuine tap, 297 km away"
+   },
+   "cross_border_shaped": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "536 ms, \u00a3331/tap, 3 taps every 25min, 20min after last genuine tap, 546 km away"
+   },
+   "fresh_token_cashout": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "347 ms, \u00a3513/tap, 6 taps every 2min, token 3.8h old, 2035 km away"
+   },
+   "token_churn": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "366 ms, \u00a3196/tap, 17 tokens, every 3.2h, token 11.1d old, 528 km away"
+   },
+   "seasoned_token": {
+    "leak": 0.0,
+    "evade_rate": 0.0,
+    "best_payoff": 0.0,
+    "best": "115 ms, \u00a3589/tap, 3 seasoning taps, 10 cash-outs every 10min"
+   }
+  }
+ },
+ "validation": {
+  "baseline": {
+   "robust": 2,
+   "families": {
+    "transit_abuse": {
+     "prevented": 0.0,
+     "extracted": 61824.73,
+     "attempted": 61824.73,
+     "n": 75
+    },
+    "brand_mixup": {
+     "prevented": 0.0,
+     "extracted": 41287.24,
+     "attempted": 41287.24,
+     "n": 75
+    },
+    "cvm_tamper": {
+     "prevented": 0.0,
+     "extracted": 39213.64,
+     "attempted": 39213.64,
+     "n": 75
+    },
+    "expired_card": {
+     "prevented": 0.0,
+     "extracted": 6508.91,
+     "attempted": 6508.91,
+     "n": 75
+    },
+    "atc_replay": {
+     "prevented": 0.0,
+     "extracted": 6042.27,
+     "attempted": 6042.27,
+     "n": 75
+    },
+    "latency_shaped": {
+     "prevented": 0.0,
+     "extracted": 19168.67,
+     "attempted": 19168.67,
+     "n": 75
+    },
+    "pin_phish_retail": {
+     "prevented": 0.0,
+     "extracted": 21724.27,
+     "attempted": 21724.27,
+     "n": 75
+    },
+    "atm_cashout": {
+     "prevented": 0.0,
+     "extracted": 37867.38,
+     "attempted": 37867.38,
+     "n": 75
+    },
+    "ghost_tap": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 17564.69,
+     "n": 75
+    },
+    "stealth_domestic": {
+     "prevented": 0.8759,
+     "extracted": 811.56,
+     "attempted": 6537.0,
+     "n": 75
+    },
+    "low_and_slow": {
+     "prevented": 0.0,
+     "extracted": 69403.36,
+     "attempted": 69403.36,
+     "n": 75
+    },
+    "cross_border_shaped": {
+     "prevented": 0.0,
+     "extracted": 10153.88,
+     "attempted": 10153.88,
+     "n": 75
+    },
+    "fresh_token_cashout": {
+     "prevented": 0.0,
+     "extracted": 45630.61,
+     "attempted": 45630.61,
+     "n": 75
+    },
+    "token_churn": {
+     "prevented": 0.0,
+     "extracted": 82673.12,
+     "attempted": 82673.12,
+     "n": 75
+    },
+    "seasoned_token": {
+     "prevented": 0.0,
+     "extracted": 40092.89,
+     "attempted": 40092.89,
+     "n": 75
+    }
+   },
+   "prevented": 0.0461,
+   "extracted": 482402.53,
+   "attempted": 505692.66,
+   "fpr": 0.0,
+   "fp": 0,
+   "n_benign": 24350,
+   "precision": 1.0,
+   "providers": {
+    "applepay": 0.0478,
+    "mastercard": 0.0,
+    "visa": 0.0,
+    "amex": 0.0,
+    "googlepay": 0.0977,
+    "eftpos": 0.0
+   }
+  },
+  "phase2": {
+   "robust": 15,
+   "families": {
+    "transit_abuse": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 61824.73,
+     "n": 75
+    },
+    "brand_mixup": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 41287.24,
+     "n": 75
+    },
+    "cvm_tamper": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 39213.64,
+     "n": 75
+    },
+    "expired_card": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 6508.91,
+     "n": 75
+    },
+    "atc_replay": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 6042.27,
+     "n": 75
+    },
+    "latency_shaped": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 19168.67,
+     "n": 75
+    },
+    "pin_phish_retail": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 21724.27,
+     "n": 75
+    },
+    "atm_cashout": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 37867.38,
+     "n": 75
+    },
+    "ghost_tap": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 17564.69,
+     "n": 75
+    },
+    "stealth_domestic": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 6537.0,
+     "n": 75
+    },
+    "low_and_slow": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 69403.36,
+     "n": 75
+    },
+    "cross_border_shaped": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 10153.88,
+     "n": 75
+    },
+    "fresh_token_cashout": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 45630.61,
+     "n": 75
+    },
+    "token_churn": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 82673.12,
+     "n": 75
+    },
+    "seasoned_token": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 40092.89,
+     "n": 75
+    }
+   },
+   "prevented": 1.0,
+   "extracted": 0.0,
+   "attempted": 505692.66,
+   "fpr": 0.00156,
+   "fp": 38,
+   "n_benign": 24350,
+   "precision": 0.9822,
+   "providers": {
+    "applepay": 1.0,
+    "mastercard": 1.0,
+    "visa": 1.0,
+    "amex": 1.0,
+    "googlepay": 1.0,
+    "eftpos": 1.0
+   }
+  },
+  "final": {
+   "robust": 15,
+   "families": {
+    "transit_abuse": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 61824.73,
+     "n": 75
+    },
+    "brand_mixup": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 41287.24,
+     "n": 75
+    },
+    "cvm_tamper": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 39213.64,
+     "n": 75
+    },
+    "expired_card": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 6508.91,
+     "n": 75
+    },
+    "atc_replay": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 6042.27,
+     "n": 75
+    },
+    "latency_shaped": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 19168.67,
+     "n": 75
+    },
+    "pin_phish_retail": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 21724.27,
+     "n": 75
+    },
+    "atm_cashout": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 37867.38,
+     "n": 75
+    },
+    "ghost_tap": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 17564.69,
+     "n": 75
+    },
+    "stealth_domestic": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 6537.0,
+     "n": 75
+    },
+    "low_and_slow": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 69403.36,
+     "n": 75
+    },
+    "cross_border_shaped": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 10153.88,
+     "n": 75
+    },
+    "fresh_token_cashout": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 45630.61,
+     "n": 75
+    },
+    "token_churn": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 82673.12,
+     "n": 75
+    },
+    "seasoned_token": {
+     "prevented": 1.0,
+     "extracted": 0.0,
+     "attempted": 40092.89,
+     "n": 75
+    }
+   },
+   "prevented": 1.0,
+   "extracted": 0.0,
+   "attempted": 505692.66,
+   "fpr": 0.00275,
+   "fp": 67,
+   "n_benign": 24350,
+   "precision": 0.969,
+   "providers": {
+    "applepay": 1.0,
+    "mastercard": 1.0,
+    "visa": 1.0,
+    "amex": 1.0,
+    "googlepay": 1.0,
+    "eftpos": 1.0
+   }
+  }
+ },
+ "sensitivity": [
+  {
+   "floor_ms": 95,
+   "baseline": {
+    "benchmark_prevented": 0.0484,
+    "covered": 2,
+    "fuzz_leak": 0.9249,
+    "best_payoff": 10110.21
+   },
+   "phase2": {
+    "benchmark_prevented": 1.0,
+    "covered": 15,
+    "fuzz_leak": 0.0,
+    "best_payoff": 0.0
+   },
+   "final": {
+    "benchmark_prevented": 0.9998,
+    "covered": 15,
+    "fuzz_leak": 0.0,
+    "best_payoff": 0.0
+   }
+  },
+  {
+   "floor_ms": 80,
+   "baseline": {
+    "benchmark_prevented": 0.0484,
+    "covered": 2,
+    "fuzz_leak": 0.9249,
+    "best_payoff": 10110.21
+   },
+   "phase2": {
+    "benchmark_prevented": 0.9881,
+    "covered": 15,
+    "fuzz_leak": 0.0777,
+    "best_payoff": 6286.49
+   },
+   "final": {
+    "benchmark_prevented": 0.9983,
+    "covered": 15,
+    "fuzz_leak": 0.0053,
+    "best_payoff": 358.3
+   }
+  },
+  {
+   "floor_ms": 65,
+   "baseline": {
+    "benchmark_prevented": 0.0484,
+    "covered": 2,
+    "fuzz_leak": 0.9249,
+    "best_payoff": 10110.21
+   },
+   "phase2": {
+    "benchmark_prevented": 0.8254,
+    "covered": 9,
+    "fuzz_leak": 0.2722,
+    "best_payoff": 6353.13
+   },
+   "final": {
+    "benchmark_prevented": 0.9283,
+    "covered": 13,
+    "fuzz_leak": 0.0158,
+    "best_payoff": 1046.63
+   }
+  },
+  {
+   "floor_ms": 50,
+   "baseline": {
+    "benchmark_prevented": 0.0484,
+    "covered": 2,
+    "fuzz_leak": 0.9249,
+    "best_payoff": 10110.21
+   },
+   "phase2": {
+    "benchmark_prevented": 0.6091,
+    "covered": 7,
+    "fuzz_leak": 0.4951,
+    "best_payoff": 10123.8
+   },
+   "final": {
+    "benchmark_prevented": 0.8259,
+    "covered": 12,
+    "fuzz_leak": 0.0313,
+    "best_payoff": 828.26
+   }
+  }
+ ],
+ "realworld": {
+  "rows": 154499,
+  "recall": 0.004730250191917118,
+  "precision": 0.4192592592592592,
+  "fpr": 0.00023906018772514113,
+  "by_scenario": {
+   "1": {
+    "recall": 0.0,
+    "n": 73
+   },
+   "2": {
+    "recall": 0.0003940110323089047,
+    "n": 2607
+   },
+   "3": {
+    "recall": 0.010751497978098528,
+    "n": 1948
+   }
+  },
+  "issuer_fraud_recall": 0.10823863896434069,
+  "issuer_legit_decline": 0.07421652579458565
+ },
+ "config": {
+  "baseline": {
+   "layers": [
+    "latency_tier",
+    "geo_travel",
+    "nopin_new_terminal",
+    "velocity_burst",
+    "far_from_home"
+   ],
+   "param_overrides": {},
+   "patches": []
+  },
+  "phase2": {
+   "layers": [
+    "latency_tier",
+    "geo_travel",
+    "nopin_new_terminal",
+    "velocity_burst",
+    "far_from_home",
+    "latency_jump",
+    "chronic_latency",
+    "spend_spike",
+    "terminal_fresh_burst",
+    "expired_card",
+    "aid_brand_mismatch",
+    "cvm_integrity",
+    "atc_regression",
+    "transit_misuse",
+    "sustained_velocity",
+    "anomalous_spend_accumulation",
+    "new_country",
+    "anomalous_new_terminal"
+   ],
+   "param_overrides": {
+    "jump_margin_ms": 40.0
+   },
+   "patches": [
+    "tighten_latency_margin",
+    "anomalous_new_terminal"
+   ]
+  },
+  "loop_path": {
+   "layers": [
+    "latency_tier",
+    "geo_travel",
+    "nopin_new_terminal",
+    "velocity_burst",
+    "far_from_home",
+    "latency_jump",
+    "chronic_latency",
+    "spend_spike",
+    "terminal_fresh_burst",
+    "expired_card",
+    "aid_brand_mismatch",
+    "cvm_integrity",
+    "atc_regression",
+    "transit_misuse",
+    "sustained_velocity",
+    "anomalous_spend_accumulation",
+    "new_country",
+    "anomalous_new_terminal",
+    "displaced_new_token",
+    "captive_terminal",
+    "dormant_token_first_use",
+    "young_merchant_accumulation",
+    "stranger_merchant_highvalue"
+   ],
+   "param_overrides": {
+    "jump_margin_ms": 40.0,
+    "churn_window_s": 86400,
+    "burst_strong_n": 2,
+    "burst_counts_unused": 1
+   },
+   "patches": [
+    "tighten_latency_margin",
+    "anomalous_new_terminal",
+    "captive_terminal",
+    "young_merchant_accumulation",
+    "churn_window_24h",
+    "dormant_token_first_use",
+    "stranger_merchant_highvalue",
+    "displaced_new_token",
+    "unused_token_burst",
+    "strong_fresh_burst"
+   ]
+  },
+  "final": {
+   "layers": [
+    "latency_tier",
+    "geo_travel",
+    "nopin_new_terminal",
+    "velocity_burst",
+    "far_from_home",
+    "latency_jump",
+    "chronic_latency",
+    "fresh_token_highvalue",
+    "fresh_latency_combo",
+    "spend_spike",
+    "terminal_fresh_burst",
+    "young_terminal",
+    "expired_card",
+    "aid_brand_mismatch",
+    "cvm_integrity",
+    "atc_regression",
+    "transit_misuse",
+    "atm_anomaly",
+    "sustained_velocity",
+    "anomalous_spend_accumulation",
+    "new_country",
+    "anomalous_new_terminal",
+    "out_of_area",
+    "displaced_new_token",
+    "captive_terminal",
+    "dormant_token_first_use",
+    "young_merchant_accumulation",
+    "stranger_merchant_highvalue",
+    "atm_daily_limit",
+    "amount_anomaly"
+   ],
+   "param_overrides": {
+    "jump_margin_ms": 40.0,
+    "churn_window_s": 86400,
+    "accum_window_s": 604800,
+    "burst_strong_n": 2,
+    "burst_counts_unused": 1
+   },
+   "patches": [
+    "tighten_latency_margin",
+    "anomalous_new_terminal",
+    "captive_terminal",
+    "young_merchant_accumulation",
+    "churn_window_24h",
+    "dormant_token_first_use",
+    "stranger_merchant_highvalue",
+    "displaced_new_token",
+    "unused_token_burst",
+    "strong_fresh_burst"
+   ]
+  }
+ },
+ "counts": {
+  "layers": {
+   "baseline": 5,
+   "final": 30
+  },
+  "groups": {
+   "baseline": 5,
+   "final": 25
+  },
+  "providers": 6,
+  "families": 15
+ },
+ "headline": {
+  "families_covered": [
+   2,
+   15
+  ],
+  "value_blocked": [
+   0.0461,
+   1.0
+  ],
+  "fuzz_leak": [
+   0.6498,
+   0.0
+  ],
+  "best_attack": [
+   12037.87,
+   0.0
+  ],
+  "layers": [
+   5,
+   30
+  ],
+  "fpr": [
+   0.0,
+   0.00275
+  ],
+  "precision": [
+   1.0,
+   0.969
+  ]
+ }
+}

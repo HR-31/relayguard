@@ -1,0 +1,336 @@
+{
+ "detector": "LayeredDetector.full()",
+ "note": "Each entry is an attack the red team found; the detector must keep it at or below locked_max_payoff. Regenerate with `python3 -m relayguard.gaps --freeze`.",
+ "floors_ms": [
+  95,
+  50
+ ],
+ "gaps": [
+  {
+   "floor_ms": 50,
+   "family": "atm_cashout",
+   "label": "ATM cash-out relay",
+   "genome": {
+    "lat": 67.753,
+    "amount": 394.366,
+    "gap_s": 167111.166,
+    "n_taps": 3,
+    "tap_gap_s": 432.35
+   },
+   "describe": "68 ms, \u00a3394/tap, 3 taps every 7min, 1.9d after last genuine tap",
+   "measured_payoff": 1192.54,
+   "locked_max_payoff": 866.67
+  },
+  {
+   "floor_ms": 50,
+   "family": "cross_border_shaped",
+   "label": "Plausible-travel relay",
+   "genome": {
+    "lat": 67.66,
+    "amount": 71.812,
+    "gap_s": 110091.483,
+    "n_taps": 3,
+    "tap_gap_s": 1352.728,
+    "dist_km": 300
+   },
+   "describe": "68 ms, \u00a372/tap, 3 taps every 23min, 1.3d after last genuine tap, 300 km away",
+   "measured_payoff": 216.63,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 50,
+   "family": "fresh_token_cashout",
+   "label": "Fresh-wallet cash-out",
+   "genome": {
+    "lat": 58.336,
+    "amount": 95.644,
+    "age_s": 80206.974,
+    "n_tokens": 1,
+    "n_taps": 6,
+    "tap_gap_s": 5948.251,
+    "dist_km": 2140.666,
+    "abroad": 1
+   },
+   "describe": "58 ms, \u00a396/tap, 6 taps every 1.7h, token 22.3h old, 2141 km away",
+   "measured_payoff": 549.71,
+   "locked_max_payoff": 697.63
+  },
+  {
+   "floor_ms": 50,
+   "family": "ghost_tap",
+   "label": "Classic ghost tap",
+   "genome": {
+    "lat": 81.362,
+    "amount": 83.384,
+    "gap_s": 70781.25,
+    "n_taps": 1,
+    "tap_gap_s": 1331.306,
+    "dist_km": 4552.228
+   },
+   "describe": "81 ms, \u00a383/tap, 19.7h after last genuine tap, 4552 km away",
+   "measured_payoff": 84.44,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 50,
+   "family": "latency_shaped",
+   "label": "Latency-shaped relay",
+   "genome": {
+    "lat": 70.484,
+    "amount": 431.492,
+    "gap_s": 68509.439,
+    "n_taps": 2,
+    "tap_gap_s": 35.176,
+    "dist_km": 5
+   },
+   "describe": "70 ms, \u00a3431/tap, 2 taps every 35s, 19.0h after last genuine tap, 5 km away",
+   "measured_payoff": 371.85,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 50,
+   "family": "low_and_slow",
+   "label": "Low-and-slow drain",
+   "genome": {
+    "lat": 85.094,
+    "amount": 24.069,
+    "gap_s": 8817.226,
+    "n_taps": 14,
+    "tap_gap_s": 38184.944,
+    "dist_km": 180.276
+   },
+   "describe": "85 ms, \u00a324/tap, 14 taps every 10.6h, 2.4h after last genuine tap, 180 km away",
+   "measured_payoff": 173.87,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 50,
+   "family": "pin_phish_retail",
+   "label": "Relay with phished PIN",
+   "genome": {
+    "lat": 73.061,
+    "amount": 199.285,
+    "gap_s": 2538.253,
+    "n_taps": 2,
+    "tap_gap_s": 329.406,
+    "dist_km": 64.835
+   },
+   "describe": "73 ms, \u00a3199/tap, 2 taps every 5min, 42min after last genuine tap, 65 km away",
+   "measured_payoff": 394.6,
+   "locked_max_payoff": 478.55
+  },
+  {
+   "floor_ms": 50,
+   "family": "seasoned_token",
+   "label": "Seasoned token",
+   "genome": {
+    "season_taps": 10,
+    "season_gap_s": 1943.034,
+    "lat": 74.635,
+    "amount": 86.952,
+    "n_cash": 9,
+    "cash_gap_s": 663.574
+   },
+   "describe": "75 ms, \u00a387/tap, 10 seasoning taps, 9 cash-outs every 11min",
+   "measured_payoff": 880.64,
+   "locked_max_payoff": 1312.77
+  },
+  {
+   "floor_ms": 50,
+   "family": "stealth_domestic",
+   "label": "Stealth domestic relay",
+   "genome": {
+    "lat": 51.926,
+    "amount": 426.496,
+    "gap_s": 8305.569,
+    "n_taps": 1,
+    "tap_gap_s": 85.522,
+    "dist_km": 26.6
+   },
+   "describe": "52 ms, \u00a3426/tap, 2.3h after last genuine tap, 27 km away",
+   "measured_payoff": 352.39,
+   "locked_max_payoff": 500.0
+  },
+  {
+   "floor_ms": 50,
+   "family": "token_churn",
+   "label": "Token churn",
+   "genome": {
+    "lat": 81.23,
+    "amount": 410.39,
+    "age_s": 53647.086,
+    "n_tokens": 17,
+    "n_taps": 1,
+    "tap_gap_s": 42.557,
+    "dist_km": 59.413,
+    "abroad": 0
+   },
+   "describe": "81 ms, \u00a3410/tap, 17 tokens, every 43s, token 14.9h old, 59 km away",
+   "measured_payoff": 412.85,
+   "locked_max_payoff": 612.32
+  },
+  {
+   "floor_ms": 95,
+   "family": "atm_cashout",
+   "label": "ATM cash-out relay",
+   "genome": {
+    "lat": 550.628,
+    "amount": 376.226,
+    "gap_s": 16187.35,
+    "n_taps": 2,
+    "tap_gap_s": 22.948
+   },
+   "describe": "551 ms, \u00a3376/tap, 2 taps every 23s, 4.5h after last genuine tap",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "cross_border_shaped",
+   "label": "Plausible-travel relay",
+   "genome": {
+    "lat": 437.904,
+    "amount": 293.346,
+    "gap_s": 304.073,
+    "n_taps": 1,
+    "tap_gap_s": 163.775,
+    "dist_km": 1024.911
+   },
+   "describe": "438 ms, \u00a3293/tap, 5min after last genuine tap, 1025 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "fresh_token_cashout",
+   "label": "Fresh-wallet cash-out",
+   "genome": {
+    "lat": 503.265,
+    "amount": 484.602,
+    "age_s": 738146.355,
+    "n_tokens": 1,
+    "n_taps": 6,
+    "tap_gap_s": 34703.594,
+    "dist_km": 27.04,
+    "abroad": 1
+   },
+   "describe": "503 ms, \u00a3485/tap, 6 taps every 9.6h, token 8.5d old, 27 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "ghost_tap",
+   "label": "Classic ghost tap",
+   "genome": {
+    "lat": 220.747,
+    "amount": 262.425,
+    "gap_s": 1998.622,
+    "n_taps": 3,
+    "tap_gap_s": 123.46,
+    "dist_km": 2349.238
+   },
+   "describe": "221 ms, \u00a3262/tap, 3 taps every 2min, 33min after last genuine tap, 2349 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "latency_shaped",
+   "label": "Latency-shaped relay",
+   "genome": {
+    "lat": 496.852,
+    "amount": 430.945,
+    "gap_s": 2010.865,
+    "n_taps": 3,
+    "tap_gap_s": 81.63,
+    "dist_km": 456.748
+   },
+   "describe": "497 ms, \u00a3431/tap, 3 taps every 1min, 34min after last genuine tap, 457 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "low_and_slow",
+   "label": "Low-and-slow drain",
+   "genome": {
+    "lat": 102.929,
+    "amount": 467.491,
+    "gap_s": 34766.356,
+    "n_taps": 16,
+    "tap_gap_s": 15113.088,
+    "dist_km": 190.535
+   },
+   "describe": "103 ms, \u00a3467/tap, 16 taps every 4.2h, 9.7h after last genuine tap, 191 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "pin_phish_retail",
+   "label": "Relay with phished PIN",
+   "genome": {
+    "lat": 176.451,
+    "amount": 272.679,
+    "gap_s": 6218.177,
+    "n_taps": 2,
+    "tap_gap_s": 1959.865,
+    "dist_km": 94.633
+   },
+   "describe": "176 ms, \u00a3273/tap, 2 taps every 33min, 1.7h after last genuine tap, 95 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "seasoned_token",
+   "label": "Seasoned token",
+   "genome": {
+    "season_taps": 3,
+    "season_gap_s": 2063.289,
+    "lat": 186.903,
+    "amount": 391.378,
+    "n_cash": 5,
+    "cash_gap_s": 538.724
+   },
+   "describe": "187 ms, \u00a3391/tap, 3 seasoning taps, 5 cash-outs every 9min",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "stealth_domestic",
+   "label": "Stealth domestic relay",
+   "genome": {
+    "lat": 439.73,
+    "amount": 135.045,
+    "gap_s": 286.256,
+    "n_taps": 1,
+    "tap_gap_s": 276.329,
+    "dist_km": 238.042
+   },
+   "describe": "440 ms, \u00a3135/tap, 5min after last genuine tap, 238 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  },
+  {
+   "floor_ms": 95,
+   "family": "token_churn",
+   "label": "Token churn",
+   "genome": {
+    "lat": 356.078,
+    "amount": 429.257,
+    "age_s": 297.753,
+    "n_tokens": 4,
+    "n_taps": 1,
+    "tap_gap_s": 671.398,
+    "dist_km": 206.996,
+    "abroad": 0
+   },
+   "describe": "356 ms, \u00a3429/tap, 4 tokens, every 11min, token 5min old, 207 km away",
+   "measured_payoff": 0.0,
+   "locked_max_payoff": 400.0
+  }
+ ]
+}

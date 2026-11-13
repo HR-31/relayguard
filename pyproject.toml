@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "relayguard"
-version = "0.1.0"
+version = "0.2.0"
 description = "Issuer-side detector for NFC contactless relay ('Ghost Tap') fraud."
 readme = "README.md"
 requires-python = ">=3.9"
